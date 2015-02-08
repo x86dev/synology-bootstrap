@@ -1,0 +1,12 @@
+
+# Include common profile stuff.
+source /etc/profile
+
+# Don't let screen reset my fancy prompt.
+shell -$SHELL
+
+# Some screen-specific stuff.
+startup_message off
+defutf8 on
+autodetach on
+caption always "%{= wk} %-w%{= KW} [%n %t] %{-}%+w %= | @%H | %l | %Y-%m-%d %c "
