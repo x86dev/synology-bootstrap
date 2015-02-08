@@ -1,0 +1,8 @@
+Tweak sshd:
+    /etc/ssh/sshd_config:
+        Add: Subsystem  sftp    /Apps/opt/libexec/sftp-server
+
+Connect via SSHFS with:
+        sshfs -o idmap=user,IdentityFile=$HOME/.ssh/id_device_root root@IP:/ /mnt/device/root
+        sshfs -o idmap=user,IdentityFile=$HOME/.ssh/id_device_root root@IP:/volume1 /mnt/device/vol1
+        sshfs -o idmap=user,IdentityFile=$HOME/.ssh/id_device_root root@IP:/volume2 /mnt/device/vol2
