@@ -1,6 +1,17 @@
 #!/bin/sh
 
-## @ŧodo Check architecture!
+## @ŧodo Check CPU architecture!
+
+# Set exit on error.
+set -e
+
+#
+# Cleanup first.
+## @todo Warn before doing this!
+#
+umount opt
+rm -rf /volume1/@optware
+rm -rf /usr/lib/ipkg
 
 #
 # Install Entware.
@@ -16,6 +27,27 @@ PATH_ENTWARE=$PATH_ENTWARE_ROOT/bin:$PATH_ENTWARE_ROOT/sbin:$PATH_ENTWARE_ROOT/l
 export PATH_ORG=$PATH &&
 export PATH=$PATH_ENTWARE:$PATH &&
 opkg install bash bash-completion bzip2 cryptsetup git htop less lsof mc ncdu screen rsync rsnapshot smartmontools strace subversion-client vim wget
+
+#
+# Install Optware.
+# Note: Only use Optware where absolutely necessary, as it contains a lot of old and outdated
+#       stuff we don't want on our servers (anymore). For everything else we'll use Entware (see above).
+cd /tmp &&
+wget -O - http://ipkg.nslu2-linux.org/feeds/optware/cs08q1armel/cross/stable/syno-mvkw-bootstrap_1.2-7_arm.xsh | sh &&
+# Patch the bootstrap script to also recognize newer Kirkwood CPUs. 
+sed -i -e "s/Feroceon-KW/Feroceon/g" /tmp/bootstrap/bootstrap.sh &&
+# Re-execute the (patched) bootstrap script.
+sh /tmp/bootstrap/bootstrap.sh &&
+#  Update sources.
+/opt/bin/ipkg update &&
+rm -rf /tmp/bootstrap
+
+#
+# Install the stuff we need from Optware.
+#
+/opt/bin/ipkg install py26-rdiff-backup &&
+ln -s /opt/bin/rdiff-backup-2.6 /usr/bin/rdiff-backup &&
+ln -s /opt/bin/rdiff-backup-statistics-2.6 /usr/bin/rdiff-backup-statistics
 
 #
 # Make sure that Optware + Entware start their stuff.

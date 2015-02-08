@@ -1,8 +1,9 @@
 umask 022
 
-PATH_ENVWARE=/Apps/opt/bin:/Apps/opt/sbin:/Apps/opt/local/bin:/Apps/opt/local/sbin
+PATH_ENTWARE=/Apps/opt/bin:/Apps/opt/sbin:/Apps/opt/local/bin:/Apps/opt/local/sbin
+PATH_OPTWARE=/opt/sbin:/opt/bin:/opt/local/sbin:/opt/local/bin
 
-PATH=$PATH_ENVWARE:/sbin:/bin:/usr/sbin:/usr/bin:/usr/syno/sbin:/usr/syno/bin:/usr/local/sbin:/usr/local/bin
+PATH=$PATH_ENTWARE:$PATH_OPTWARE:/sbin:/bin:/usr/sbin:/usr/bin:/usr/syno/sbin:/usr/syno/bin:/usr/local/sbin:/usr/local/bin
 export PATH
 
 #This fixes the backspace when telnetting in.
