@@ -38,3 +38,8 @@ EOT
 #
 chmod -R u=rwX,g=rwX,o=rX * /etc
 chmod -R u=rw,go= * /etc/ssh
+
+# Replace ash with bash.
+PATH_SHELL_OLD=/bin/ash
+PATH_SHELL_NEW=/Apps/opt/bin/bash
+sed -i -e "s|$PATH_SHELL_OLD|$PATH_SHELL_NEW|g" /etc/passwd

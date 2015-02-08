@@ -18,15 +18,17 @@ export TERMINFO
 TERM=${TERM:-cons25}
 export TERM
 
-PAGER=more
+PAGER=less
 export PAGER
 
 export LC_ALL=en_US.utf8
 export LANG=en_US.utf8
 
-PS1="`hostname`> "
+# A more fancy (bash) shell prompt.
+PS1="[\A] \u@\h [\w] \$ "
 
 alias dir="ls -al"
 alias ll="ls -la"
+alias vi="vim"
 
 ulimit -c unlimited
