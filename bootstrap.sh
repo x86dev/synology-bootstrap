@@ -17,6 +17,28 @@ rm -rf /usr/lib/ipkg
 # Install Entware.
 # See: https://github.com/Entware/entware
 #
+ENTWARE_PACKAGES="
+    bash
+    bash-completion
+    bzip2
+    coreutils-mktemp
+    cryptsetup
+    curl
+    git
+    htop
+    less
+    lsof
+    mc
+    ncdu
+    screen
+    rsync
+    rsnapshot
+    smartmontools
+    strace
+    subversion-client
+    vim
+    wget"
+
 PATH_ENTWARE_ROOT=/Apps/opt
 mkdir -p /Apps
 mkdir -p /volume1/@qnapware/opt
@@ -27,7 +49,7 @@ PATH_ENTWARE=$PATH_ENTWARE_ROOT/bin:$PATH_ENTWARE_ROOT/sbin:$PATH_ENTWARE_ROOT/l
 export PATH_ORG=$PATH
 export PATH=$PATH_ENTWARE:$PATH
 $PATH_ENTWARE_ROOT/bin/opkg update
-$PATH_ENTWARE_ROOT/bin/opkg install bash bash-completion bzip2 cryptsetup curl git htop less lsof mc ncdu screen rsync rsnapshot smartmontools strace subversion-client vim wget
+$PATH_ENTWARE_ROOT/bin/opkg install ${ENTWARE_PACKAGES}
 
 #
 # Install Optware.
@@ -78,7 +100,7 @@ PATH_SHELL_NEW=/Apps/opt/bin/bash
 sed -i -e "s|$PATH_SHELL_OLD|$PATH_SHELL_NEW|g" /etc/passwd
 
 #
-# Install additional CA-Certs. Currently non are required.
+# Install additional CA-Certs. Currently none are required.
 #
 CA_CERTS=""
 
@@ -103,6 +125,7 @@ done
 # Link some more binaries to the /bin directory. Required e.g. for
 # a shebang. Everything else though should be in $PATH anyway.
 ln -s /Apps/opt/bin/bash /bin/bash
+ln -s /Apps/opt/bin/mktemp /bin/mktemp
 
 # Set the correct OpenSSL config.
 rm /opt/share/openssl/openssl.cnf
@@ -111,6 +134,3 @@ ln -s /etc/ssl/openssl.cnf /opt/share/openssl/openssl.cnf
 # Let CURL and friends find the CACerts.
 ln -s /etc/ssl /Apps/opt/etc/ssl
 ln -s /etc/ssl /opt/etc/ssl
-
-
-
