@@ -35,7 +35,7 @@ $PATH_ENTWARE_ROOT/bin/opkg install bash bash-completion bzip2 cryptsetup curl g
 #       stuff we don't want on our servers (anymore). For everything else we'll use Entware (see above).
 cd /tmp
 wget -O - http://ipkg.nslu2-linux.org/feeds/optware/cs08q1armel/cross/stable/syno-mvkw-bootstrap_1.2-7_arm.xsh | sh
-# Patch the bootstrap script to also recognize newer Kirkwood CPUs. 
+# Patch the bootstrap script to also recognize newer Kirkwood CPUs.
 sed -i -e "s/Feroceon-KW/Feroceon/g" /tmp/bootstrap/bootstrap.sh
 # Re-execute the (patched) bootstrap script.
 sh /tmp/bootstrap/bootstrap.sh
@@ -99,6 +99,11 @@ done
 #
 # Do some other required hacks.
 #
+
+# Link some more binaries to the /bin directory. Required e.g. for
+# a shebang. Everything else though should be in $PATH anyway.
+ln -s /Apps/opt/bin/bash /bin/bash
+
 # Set the correct OpenSSL config.
 rm /opt/share/openssl/openssl.cnf
 ln -s /etc/ssl/openssl.cnf /opt/share/openssl/openssl.cnf
