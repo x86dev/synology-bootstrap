@@ -80,7 +80,6 @@ sed -i -e "s|$PATH_SHELL_OLD|$PATH_SHELL_NEW|g" /etc/passwd
 #
 # Install additional CA-Certs. Currently non are required.
 #
-
 CA_CERTS=""
 
 for CERT in $CA_CERTS
@@ -96,3 +95,17 @@ do
     ln -s CERT_NAME_PEM.pem `openssl x509 -hash -noout -in $CERT_NAME_PEM`.0
     openssl verify -CApath /etc/ssl/certs $CERT_NAME_PEM
 done
+
+#
+# Do some other required hacks.
+#
+# Set the correct OpenSSL config.
+rm /opt/share/openssl/openssl.cnf
+ln -s /etc/ssl/openssl.cnf /opt/share/openssl/openssl.cnf
+
+# Let CURL and friends find the CACerts.
+ln -s /etc/ssl /Apps/opt/etc/ssl
+ln -s /etc/ssl /opt/etc/ssl
+
+
+

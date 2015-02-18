@@ -7,6 +7,7 @@ shell -$SHELL
 
 # Some screen-specific stuff.
 startup_message off
+scrollback 9999
 defutf8 on
 autodetach on
 caption always "%{= wk} %-w%{= KW} [%n %t] %{-}%+w %= | @%H | %l | %Y-%m-%d %c "
