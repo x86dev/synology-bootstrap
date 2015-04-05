@@ -24,8 +24,6 @@ arrVideos = [ tFileDupe('mkv', 0),
 
 arrDirsToDelete = [ '.*/_UNPACK_*' ];
 
-sDir = "/media/ds212/movies" #sys.argv[1]
-
 # Taken from: http://stackoverflow.com/questions/5194057/better-way-to-convert-file-sizes-in-python
 # Slightly modified to handle byte sizes as well.
 def convertSize(size):
@@ -112,6 +110,12 @@ def main():
     global g_cbDupesTotal;
     global g_bDryRun;
     global g_bRecursive;
+
+    if len(sys.argv) <= 1:
+        print "Must specify a path!";
+        sys.exit(2);
+
+    sDir = sys.argv[1];
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "h", ["help"]);
