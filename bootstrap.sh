@@ -21,7 +21,11 @@ ENTWARE_PACKAGES="
     bash
     bash-completion
     bzip2
+    coreutils-md5sum
     coreutils-mktemp
+    coreutils-sha1sum
+    coreutils-sha256sum
+    coreutils-sha512sum
     cryptsetup
     curl
     git
