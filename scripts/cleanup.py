@@ -3,29 +3,32 @@
 from collections import namedtuple # Requires at least Python 2.6.
 import datetime
 import getopt
+import errno
 import math
 import os
 import re # Regular expressions.
 import shutil # For rmtree().
 import sys
 
-g_fDryRun = False;
-g_cDupesTotal = 0;
-g_cbDupesTotal = 0;
+g_fDryRun        = False;
+g_cDupesTotal    = 0;
+g_cbDupesTotal   = 0;
 g_cbDupesRemoved = 0;
-g_sLogFile = '';
-g_fRecursive = False;
-g_cVerbosity = 0;
+g_sLogFile       = '';
+g_fRecursive     = False;
+g_cVerbosity     = 0;
 
 tFileDupe = namedtuple('tFileDupe', 'ext, prio');
 
-arrVideos = [ tFileDupe('mkv', 0), 
-              tFileDupe('avi', 10),
-              tFileDupe('wmv', 50) ];
+arrVideoTypes = [ tFileDupe('mkv' , 0), 
+                  tFileDupe('avi' , 10),
+                  tFileDupe('mp4' , 20),
+                  tFileDupe('divx', 30),
+                  tFileDupe('wmv' , 50) ];
 
 arrDirsToDelete = [ '.*/_UNPACK_*' ];
 
-arrFileExtsToDelete = [ 'url', 'nzb', 'exe', 'bat', 'cmd', 'scr', 'rar', 'zip' ];
+arrFileExtsToDelete = [ 'url', 'nzb', 'exe', 'com', 'bat', 'cmd', 'scr', 'rar', 'zip', '7z' ];
 
 # Taken from: http://stackoverflow.com/questions/5194057/better-way-to-convert-file-sizes-in-python
 # Slightly modified to handle byte sizes as well.
@@ -48,17 +51,23 @@ def deleteFile(sFile):
     print("\tDeleting file: %s" % sFile);
     if g_fDryRun:
         return;
-    os.remove(sFile);
+    try:
+        os.remove(sFile);
+    except OSError as e:
+        print("\tError deleting file \"%s\": %s" % (sFile, str(e)));
 
 def deleteDir(sDir, fRecursive):
     global g_fDryRun;
-    print("\tDeleting directory: %s" % sDir);
+    print("\tDeleting directory: %s" % sDir);    
     if g_fDryRun:
         return;
-    if fRecursive:
-        shutil.rmtree(sDir, ignore_errors = False);
-    else:
-        os.rmdir(sDir);
+    try:
+        if fRecursive:
+            shutil.rmtree(sDir, ignore_errors = False);
+        else:
+            os.rmdir(sDir);
+    except OSError as e:
+        print("\tError deleting directory \"%s\": %s" % (sDir, str(e)));
 
 def fileIsMultipart(sDir, sFile):
     pass;
@@ -76,8 +85,8 @@ def cleanupDupes(sDir, fRecursive):
             sName, sExt = os.path.splitext(sFileAbs);
             sName = sName.lower();
             sExt = sExt.lower().translate(None, ".");
-            for curVideo in arrVideos:
-                if curVideo.ext == sExt:                
+            for curType in arrVideoTypes:
+                if curType.ext == sExt:                
                     arrDupes.append(sFileAbs);
             for curExt in arrFileExtsToDelete:
                 if curExt == sExt:
@@ -146,16 +155,14 @@ def main():
         print "Must specify a path!";
         sys.exit(2);
 
-    sDir = sys.argv[1];
-
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "h", ["help"]);
+        aOpts, aArgs = getopt.gnu_getopt(sys.argv[1:], "hRv", ["dryrun", "help", "recursive" ]);
     except getopt.error, msg:
         print msg;
         print "For help use --help"
         sys.exit(2);
 
-    for o, a in opts:
+    for o, a in aOpts:
         if o in ("--dryrun"):
             g_fDryRun = True;
         if o in ("-h", "--help"):
@@ -166,10 +173,16 @@ def main():
         if o in ("-v"):
             g_cVerbosity += 1;
 
+    if len(aArgs) <= 0:
+        print("No source directory specified!");
+        sys.exit(2);
+
     if g_fDryRun:
         print("*** Dryrun mode -- no files/directories deleted! ***");
 
-    cleanupDupes(sDir, g_fRecursive);
+    for sDir in aArgs:
+        print("Processing: %s" % sDir);
+        cleanupDupes(sDir, g_fRecursive);
 
     print("Total dupes: %ld (%s)" % (g_cDupesTotal, convertSize(g_cbDupesTotal)));
 
