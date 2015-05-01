@@ -10,7 +10,7 @@ import re # Regular expressions.
 import shutil # For rmtree().
 import sys
 
-g_fDryRun        = False;
+g_fDryRun        = True;
 g_cDupesTotal    = 0;
 g_cbDupesTotal   = 0;
 g_cbDupesRemoved = 0;
@@ -134,8 +134,8 @@ def cleanupDupes(sDir, fRecursive):
             break;
 
 def printHelp():
-    print("--dryrun");
-    print("    Dryrun mode: No files/directories modified or deleted.");
+    print("--delete");
+    print("    Deletion mode: Files/directories *are* modified and/or deleted.");
     print("--help or -h");
     print("    Prints this help text.");
     print("--recursive or -R");
@@ -156,15 +156,15 @@ def main():
         sys.exit(2);
 
     try:
-        aOpts, aArgs = getopt.gnu_getopt(sys.argv[1:], "hRv", ["dryrun", "help", "recursive" ]);
+        aOpts, aArgs = getopt.gnu_getopt(sys.argv[1:], "hRv", ["delete", "help", "recursive" ]);
     except getopt.error, msg:
         print msg;
         print "For help use --help"
         sys.exit(2);
 
     for o, a in aOpts:
-        if o in ("--dryrun"):
-            g_fDryRun = True;
+        if o in ("--delete"):
+            g_fDryRun = False;
         if o in ("-h", "--help"):
             printHelp();
             sys.exit(0);
@@ -185,6 +185,9 @@ def main():
         cleanupDupes(sDir, g_fRecursive);
 
     print("Total dupes: %ld (%s)" % (g_cDupesTotal, convertSize(g_cbDupesTotal)));
+
+    if g_fDryRun:
+        print("*** Dryrun mode -- no files/directories deleted! ***");
 
 if __name__ == "__main__":
     main();
