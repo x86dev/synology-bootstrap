@@ -126,9 +126,11 @@ def cleanupDupes(sDir, fRecursive):
         if os.path.isdir(sCurDir) and len(os.listdir(sCurDir)) == 0:
             print("Directory \"%s\" is empty" % sCurDir);
             deleteDir(sCurDir, False);           
+            sCurDir = None;
 
         # Re-apply directory modification time.
-        os.utime(sCurDir, (-1, mtimeDir));
+        if sCurDir:
+            os.utime(sCurDir, (-1, mtimeDir));
 
         if not fRecursive:
             break;
